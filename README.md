@@ -2,6 +2,23 @@
 
 Ghostex Web is the static browser version of Ghostex's sidebar and Agents workspace. It connects directly to gxserver, opens zmx-backed terminals over the authenticated terminal WebSocket, and can merge sessions from multiple machines in one sidebar.
 
+## Checkout
+
+Source lives in [maddada/ghostex-web](https://github.com/maddada/ghostex-web), mounted as the `apps/web` submodule in [Ghostex](https://github.com/maddada/Ghostex). The web app builds against Ghostex's shared UI, contracts, root TypeScript configuration, and Bun dependencies; a standalone clone of this repository does not contain those inputs.
+
+```bash
+git clone https://github.com/maddada/Ghostex.git
+cd Ghostex
+git submodule update --init -- apps/web
+bun install --frozen-lockfile
+bun run web:typecheck
+bun run web:build
+```
+
+For an existing Ghostex checkout, run the submodule initialization command from its root. All commands below also run from the Ghostex root.
+
+To contribute, create a branch inside `apps/web`, commit and push there, then commit the updated `apps/web` pointer in Ghostex. Web history before the 2026-08-22 directory restructure remains in the parent repository under its former `ghostex-web/` path.
+
 ## Build and launch
 
 From the repository root:
