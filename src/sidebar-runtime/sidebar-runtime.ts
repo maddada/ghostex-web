@@ -423,6 +423,17 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
     }
   };
 
+  let revealRequestId = 0;
+  const revealActivatedSession = (target: SidebarSessionReference): void => {
+    if (settings.revealSessionWhenActivating) {
+      messageSource.postMessage({
+        requestId: ++revealRequestId,
+        sessionId: createSidebarSessionId(target.machineId, target.projectId, target.sessionId),
+        type: 'revealSidebarSession',
+      });
+    }
+  };
+
   const focusSession = async (sessionId: string): Promise<void> => {
     const target = parseSidebarSessionId(sessionId);
     if (!target || !presentationHasSession(getConnectionStates(), target)) {
@@ -441,6 +452,7 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
     }
     publish();
     dispatchFocusSession(target);
+    revealActivatedSession(target);
   };
 
   const createSession = async (groupId?: string): Promise<void> => {
@@ -1016,6 +1028,7 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
     activeTarget = { machineId: target.machineId, projectId: target.projectId };
     focusedTarget = target;
     publish();
+    revealActivatedSession(target);
   };
 
   return {
