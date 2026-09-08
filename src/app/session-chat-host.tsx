@@ -192,7 +192,7 @@ export function createWebSessionHostActions(
       { id: 'fork', label: 'Fork Session' },
       // Sentence case, matching the desktop hosts' labels so the same menu row
       // reads the same on every surface.
-      { id: 'fullReload', label: 'Full reload' },
+      { id: 'fullReload', label: 'Full Reload' },
       /*
       CDXC:AgentProviders 2026-09-03:
       Rows come from the presentation so the terminal bar (which has no chat
@@ -283,9 +283,7 @@ export function SessionChatHost({
       className='workspace-session-chat'
       customTranscriptWidthEnabled={chatSettings.sessionChatCustomTranscriptWidthEnabled}
       hostActions={hostActions}
-      // Served from node_modules in dev and copied into dist by the vite
-      // config's monaco plugin.
-      monacoVsBaseUrl='/monaco/vs'
+      inputBackend='lexical'
       onDelayedActions={() => openSessionDelayedActions(session)}
       onSelectForkBranch={selectForkBranch}
       sessionKey={sessionKey}
