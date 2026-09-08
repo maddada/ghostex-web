@@ -1,3 +1,4 @@
+import { isReservedQuickAccessSessionScopeHotkey } from '@/packages/core-ui/quick-access-session-scope';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   getghostexHotkeyActionIdForKey,
@@ -507,6 +508,7 @@ export function IntegratedAgentsPage() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (isReservedQuickAccessSessionScopeHotkey(event)) return;
       if (event.defaultPrevented || event.repeat || hasActiveSidebarHotkeyRecorder()) return;
       const hotkeyText = ghostexHotkeyTextFromKeyboardEvent(event);
       if (!hotkeyText) return;
