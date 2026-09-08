@@ -55,6 +55,13 @@ export function createSessionChatTransport(
         ...(params.beforeOffset !== undefined ? { beforeOffset: params.beforeOffset } : {}),
       });
     },
+    readSubagent(params) {
+      return rpcForMachine<GxserverReadSessionChatResult>(machineId, '/api/readSessionChat', {
+        ...params,
+        projectId,
+        sessionId,
+      });
+    },
     readFiles() {
       return rpcForMachine<GxserverReadSessionChatFilesResult>(machineId, '/api/readSessionChatFiles', {
         projectId,
@@ -160,6 +167,7 @@ export function createSessionChatTransport(
       return rpcForMachine<GxserverSelectSessionChatModelResult>(machineId, '/api/selectSessionChatModel', {
         effort: params.effort,
         defer: params.defer,
+        options: params.options,
         model: params.model,
         projectId,
         sessionId,
