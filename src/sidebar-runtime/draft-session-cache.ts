@@ -1,3 +1,6 @@
+import { importDraftRecovery } from '@/packages/core-ui/chat/session-chat-draft-recovery';
+import { replayDraftSaves } from '@/packages/core-ui/chat/session-chat-draft-outbox';
+import { sessionChatDraftClientId } from '@/packages/core-ui/chat/session-chat-queue';
 /*
 CDXC:Drafts 2026-08-28:
 The web half of the boot-time draft-cache heal (see the desktop's
@@ -17,9 +20,19 @@ export function reconcileWebSessionChatDraftCache(machineId: string): void {
   if (reconciledDraftMachineIds.has(machineId)) {
     return;
   }
+  replayDraftSaves(`${machineId}:`, async (draft, projectId, sessionId) => {
+    await rpcForMachine(machineId, '/api/setSessionChatDraft', {
+      projectId,
+      sessionId,
+      content: draft.content,
+      draftVersion: draft.version,
+      clientId: sessionChatDraftClientId(),
+    });
+  });
   reconciledDraftMachineIds.add(machineId);
   void rpcForMachine<GxserverListSessionChatDraftsResult>(machineId, '/api/listSessionChatDrafts')
     .then((result) => {
+      importDraftRecovery(result.recoveryDrafts, `${machineId}:`);
       reconcileSessionChatDraftsFromServer(result.drafts ?? [], `${machineId}:`);
     })
     .catch(() => {
