@@ -5,6 +5,7 @@ import {
   ghostexHotkeyTextFromKeyboardEvent,
   normalizeghostexHotkeySettings,
 } from '@/packages/shared/ghostex-hotkeys';
+import { shortcutKeyFromKeyboardEvent } from '@/packages/shared/keyboard-shortcut-key';
 import { hasActiveSidebarHotkeyRecorder } from '@/packages/core-ui/sidebar-app/session-ordering';
 import type {
   GxserverPresentationSession,
@@ -516,6 +517,12 @@ export function IntegratedAgentsPage() {
         normalizeghostexHotkeySettings(readWebSettings().hotkeys),
         hotkeyText
       );
+      if (actionId === 'openNewThreadPalette') {
+        event.preventDefault();
+        event.stopPropagation();
+        window.dispatchEvent(new CustomEvent('ghostex-web:openNewThreadPalette'));
+        return;
+      }
       if (actionId !== 'openCommandsPanel') return;
       event.preventDefault();
       event.stopPropagation();
@@ -610,7 +617,7 @@ export function IntegratedAgentsPage() {
                   autoFocus={controls.isActive}
                   baseUrl={machine.baseUrl}
                   customKeyEventHandler={(event) =>
-                    !((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'f')
+                    !((event.metaKey || event.ctrlKey) && shortcutKeyFromKeyboardEvent(event) === 'f')
                   }
                   visibility={
                     !controls.isActive ? 'parked' : session.sessionSurfaceMode === 'chat' ? 'chat' : 'visible'

@@ -93,6 +93,7 @@ declare global {
     'ghostex-web:openAddProjectModal': CustomEvent<OpenAddProjectModalDetail>;
     'ghostex-web:openCommandPane': CustomEvent<{ toggle?: boolean } | undefined>;
     'ghostex-web:openDelayedActionsModal': CustomEvent<OpenDelayedActionsModalDetail>;
+    'ghostex-web:openNewThreadPalette': CustomEvent<undefined>;
     'ghostex-web:openRecentProjectsModal': CustomEvent<OpenRecentProjectsModalDetail>;
     'ghostex-web:openSessionNoteModal': CustomEvent<OpenSessionNoteModalDetail>;
     'ghostex-web:openSidebarSpaceEditorModal': CustomEvent<OpenSidebarSpaceEditorModalDetail>;

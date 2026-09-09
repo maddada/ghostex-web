@@ -9,6 +9,7 @@ import { DelayedActionsModalHost } from '../app/delayed-actions-modal-host';
 import { ExportTranscriptModalHost } from '../app/export-transcript-modal-host';
 import { FindPromptsModalHost } from '../app/find-prompts-host';
 import { RecentProjectsModalHost } from '../app/recent-projects-modal-host';
+import { NewThreadPaletteHost } from '../app/new-thread-palette-host';
 import { SessionNoteModalHost } from '../app/session-note-modal-host';
 import { RemoteSetupModalHost } from '../app/remote-setup-modal-host';
 import { SettingsModalHost } from '../app/settings-modal-host';
@@ -193,6 +194,7 @@ function GhostexWebShell() {
           </main>
         </div>
         <RecentProjectsModalHost runtime={runtime} />
+        <NewThreadPaletteHost runtime={runtime} />
         <AddProjectModalHost />
         <DelayedActionsModalHost />
         <ExportTranscriptModalHost />
