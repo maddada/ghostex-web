@@ -291,6 +291,7 @@ export function SessionChatHost({
       theme={chatSettings.sessionChatTheme}
       transport={transport}
       verboseMode={chatSettings.sessionChatVerboseMode}
+      fileEditPreviews={chatSettings.sessionChatFileEditPreviews}
       working={session.activity === 'working'}
     />
   );
