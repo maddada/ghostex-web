@@ -10,6 +10,7 @@ import type {
   GxserverReadSessionChatFilesResult,
   GxserverReadSessionChatImageResult,
   GxserverReadSessionChatResult,
+  GxserverReadSessionChatSkillsResult,
   GxserverSaveSessionChatAttachmentResult,
   GxserverSaveSessionChatImageResult,
   GxserverSendSessionChatQueuedPromptResult,
@@ -58,6 +59,12 @@ export function createSessionChatTransport(
     readSubagent(params) {
       return rpcForMachine<GxserverReadSessionChatResult>(machineId, '/api/readSessionChat', {
         ...params,
+        projectId,
+        sessionId,
+      });
+    },
+    readSkills() {
+      return rpcForMachine<GxserverReadSessionChatSkillsResult>(machineId, '/api/readSessionChatSkills', {
         projectId,
         sessionId,
       });
