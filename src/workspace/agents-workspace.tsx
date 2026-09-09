@@ -1,3 +1,4 @@
+import { shortcutKeyFromKeyboardEvent } from '@/packages/shared/keyboard-shortcut-key';
 import {
   useEffect,
   useMemo,
@@ -676,7 +677,7 @@ export function AgentsWorkspace({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'f') {
+    if ((event.metaKey || event.ctrlKey) && shortcutKeyFromKeyboardEvent(event) === 'f') {
       event.preventDefault();
       const paneId = model.focusedPane;
       setFindPanes((current) => new Set(current).add(paneId));

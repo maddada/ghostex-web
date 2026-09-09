@@ -5,6 +5,7 @@ import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type HTMLAttributes } from 'react';
 import { detectghostexHotkeyPlatform } from '@/packages/shared/ghostex-hotkeys';
+import { shortcutKeyFromKeyboardEvent } from '@/packages/shared/keyboard-shortcut-key';
 import type {
   GxserverProjectId,
   GxserverSessionId,
@@ -79,7 +80,7 @@ function isClearScreenChord(event: KeyboardEvent): boolean {
     !event.altKey &&
     !event.ctrlKey &&
     !event.shiftKey &&
-    event.key.toLowerCase() === 'k'
+    shortcutKeyFromKeyboardEvent(event) === 'k'
   );
 }
 
