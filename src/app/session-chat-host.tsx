@@ -283,6 +283,7 @@ export function SessionChatHost({
       className='workspace-session-chat'
       customTranscriptWidthEnabled={chatSettings.sessionChatCustomTranscriptWidthEnabled}
       hostActions={hostActions}
+      hotkeys={chatSettings.hotkeys}
       inputBackend='lexical'
       onDelayedActions={() => openSessionDelayedActions(session)}
       onSelectForkBranch={selectForkBranch}
