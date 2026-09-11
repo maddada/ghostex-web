@@ -597,7 +597,7 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
       case 'forkSession': {
         const target = parseSidebarSessionId(message.sessionId);
         if (target) {
-          const result = await rpcForMachine<GxserverForkSessionResult>(
+          const { fork: result } = await rpcForMachine<{ fork: GxserverForkSessionResult }>(
             target.machineId,
             '/api/forkSession',
             lifecycleParams(target)

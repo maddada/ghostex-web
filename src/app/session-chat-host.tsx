@@ -111,7 +111,7 @@ async function runChatAgentAction(session: WorkspaceSession, actionId: string, v
       });
       return;
     case 'fork': {
-      const result = await rpcForMachine<GxserverForkSessionResult>(
+      const { fork: result } = await rpcForMachine<{ fork: GxserverForkSessionResult }>(
         session.machineId,
         '/api/forkSession',
         lifecycleParams
