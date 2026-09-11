@@ -42,6 +42,8 @@ import { useCallback, useEffect, useState } from 'react';
 import type { OpenAddProjectModalDetail } from './action-events';
 import { getConnectionStates, rpcForMachine } from '../connections/connection-registry';
 import { getActiveSidebarProject } from '../sidebar-runtime/active-project-store';
+import type { WebSidebarRuntime } from '../sidebar-runtime/sidebar-runtime';
+import { createSidebarGroupId } from '../sidebar-runtime/sidebar-ids';
 
 /*
  * The dialog surfaces a "still working" notice at 8s but never gives up on its
@@ -55,7 +57,7 @@ type AddProjectModalState = OpenAddProjectModalDetail & {
   activeProjectCwd?: string;
 };
 
-export function AddProjectModalHost() {
+export function AddProjectModalHost({ runtime }: { readonly runtime: WebSidebarRuntime }) {
   const [modalState, setModalState] = useState<AddProjectModalState>();
 
   useEffect(() => {
@@ -88,9 +90,10 @@ export function AddProjectModalHost() {
       {
         ...(input.cwd ? { cwd: input.cwd } : {}),
         partialPath: input.partialPath,
+        ...(input.inspectPath ? { inspectPath: input.inspectPath } : {}),
       }
     );
-    return { entries: result.entries, parentPath: result.parentPath };
+    return { entries: result.entries, parentPath: result.parentPath, inspection: result.inspection };
   }, []);
 
   const createDirectory = useCallback(
@@ -122,6 +125,9 @@ export function AddProjectModalHost() {
      */
     if (!project.path) {
       throw new Error('gxserver registered the project without a workspace path.');
+    }
+    if (project.isRecentProject) {
+      await rpcForMachine(input.machineId, '/api/restoreRecentProject', { projectId: project.projectId });
     }
     return {
       machineId: input.machineId,
@@ -210,6 +216,10 @@ export function AddProjectModalHost() {
       listMachineOptions={listMachineOptions}
       lookupRepository={lookupRepository}
       onClose={() => setModalState(undefined)}
+      onProjectAdded={({ machineId, projectId }) => {
+        if (projectId)
+          runtime.vscode.postMessage({ type: 'focusGroup', groupId: createSidebarGroupId(machineId, projectId) });
+      }}
       previewClone={previewClone}
       readCloneJob={readCloneJob}
       startClone={startClone}

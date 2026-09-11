@@ -195,7 +195,7 @@ function GhostexWebShell() {
         </div>
         <RecentProjectsModalHost runtime={runtime} />
         <NewThreadPaletteHost runtime={runtime} />
-        <AddProjectModalHost />
+        <AddProjectModalHost runtime={runtime} />
         <DelayedActionsModalHost />
         <ExportTranscriptModalHost />
         <FindPromptsModalHost />
