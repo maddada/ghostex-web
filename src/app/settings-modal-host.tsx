@@ -57,6 +57,7 @@ export function SettingsModalHost({ runtime }: { runtime: WebSidebarRuntime }) {
         isOpen
         onChange={save}
         onClose={() => setIsOpen(false)}
+        onUpdateCustomSessionTags={(state) => runtime.vscode.postMessage({ state, type: 'updateCustomSessionTags' })}
         settings={settings}
         tailcatRpc={getMachineConnection('local') ? LOCAL_TAILCAT_RPC : undefined}
         theme='dark-blue'

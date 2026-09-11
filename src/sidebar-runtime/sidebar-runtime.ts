@@ -9,6 +9,7 @@ import {
   type GxserverPresentationSidebarProjectOverlay,
 } from '@/packages/shared/gxserver-presentation-sidebar-projection';
 import type {
+  GxserverCustomSessionTagsState,
   GxserverPresentationSession,
   GxserverForkSessionResult,
   GxserverProjectDomainState,
@@ -251,16 +252,33 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
         return state.machine.machineId !== 'local' && spaces ? [[state.machine.machineId, spaces] as const] : [];
       })
     );
+    /*
+    CDXC:Sessions 2026-09-11 SEE-ALSO:
+    The custom session tag catalog rides hydrate/sessionState per machine exactly
+    like Spaces, so a `customSessionTagsChanged` daemon event lands in the
+    sidebar through the same republish; the desktop host does the same in
+    apps/desktop/sidebar/gxserver-runtime/workspace-groups-sync.ts.
+    */
+    const localCustomSessionTags = states.find((state) => state.machine.machineId === 'local')?.presentation
+      ?.customSessionTags;
+    const remoteCustomSessionTagsByMachineId = Object.fromEntries(
+      states.flatMap((state) => {
+        const tags = state.presentation?.customSessionTags;
+        return state.machine.machineId !== 'local' && tags ? [[state.machine.machineId, tags] as const] : [];
+      })
+    );
     const message: ExtensionToSidebarMessage = {
       groups,
       hud,
       pinnedPrompts: [],
       previousSessions: [],
       remoteSidebarProjectCollectionsByMachineId,
+      remoteCustomSessionTagsByMachineId,
       remoteSidebarSpacesByMachineId,
       revision: ++revision,
       ...(localSidebarProjectCollections ? { sidebarProjectCollections: localSidebarProjectCollections } : {}),
       ...(localSidebarSpaces ? { sidebarSpaces: localSidebarSpaces } : {}),
+      ...(localCustomSessionTags ? { customSessionTags: localCustomSessionTags } : {}),
       type: hasHydrated ? 'sessionState' : 'hydrate',
     };
     hasHydrated = true;
@@ -701,6 +719,15 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
         await rpcForMachine<{ sidebarSpaces: GxserverSidebarSpacesState }>(machineId, '/api/updateSidebarSpaces', {
           state: message.state,
         });
+        return;
+      }
+      case 'updateCustomSessionTags': {
+        const machineId = message.remoteMachineId ?? 'local';
+        await rpcForMachine<{ customSessionTags: GxserverCustomSessionTagsState }>(
+          machineId,
+          '/api/updateCustomSessionTags',
+          { state: message.state }
+        );
         return;
       }
       /*

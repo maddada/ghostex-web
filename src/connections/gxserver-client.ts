@@ -2,6 +2,7 @@ import {
   GXSERVER_PRODUCT,
   GXSERVER_PROTOCOL_VERSION,
   type GxserverEvent,
+  type GxserverCustomSessionTagsState,
   type GxserverPresentationDelta,
   type GxserverPresentationRevision,
   type GxserverPresentationSnapshot,
@@ -56,6 +57,7 @@ type PresentationSubscriptionHandlers = {
     revision: GxserverPresentationRevision
   ): void;
   onSidebarSpaces(state: GxserverSidebarSpacesState, revision: GxserverPresentationRevision): void;
+  onCustomSessionTags(state: GxserverCustomSessionTagsState, revision: GxserverPresentationRevision): void;
   onSnapshot(snapshot: GxserverPresentationSnapshot): void;
   /**
    * CDXC:StateSync 2026-09-01:
@@ -185,6 +187,8 @@ export function createGxserverClient(machine: GhostexWebMachine) {
         handlers.onSidebarProjectCollections(parsed.sidebarProjectCollections, parsed.revision);
       } else if (parsed?.type === 'sidebarSpacesChanged') {
         handlers.onSidebarSpaces(parsed.sidebarSpaces, parsed.revision);
+      } else if (parsed?.type === 'customSessionTagsChanged') {
+        handlers.onCustomSessionTags(parsed.customSessionTags, parsed.revision);
       } else if (parsed?.type === 'workspaceGroupsChanged') {
         handlers.onWorkspaceGroups(parsed.groups, parsed.revision);
       } else if (parsed?.type === 'globalSidebarCommandsChanged') {

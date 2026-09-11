@@ -196,6 +196,17 @@ export class GxserverConnection {
               });
             }
           },
+          onCustomSessionTags: (customSessionTags, revision) => {
+            if (generation !== this.generation) {
+              return;
+            }
+            const current = this.state.presentation;
+            if (current) {
+              this.updateState({
+                presentation: { ...current, customSessionTags, revision },
+              });
+            }
+          },
           onSnapshot: (snapshot) => {
             if (generation !== this.generation) {
               return;
