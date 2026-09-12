@@ -680,6 +680,29 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
       case 'setSessionParked':
         await updateSession(message.sessionId, { isParked: message.parked });
         return;
+      /*
+       * CDXC:Sessions 2026-09-12:
+       * Snooze is gxserver's server-owned lifecycle; a snoozed session is always
+       * asleep, so the sleep follows the accepted snooze exactly as on desktop.
+       */
+      case 'snoozeSession': {
+        const target = parseSidebarSessionId(message.sessionId);
+        if (target) {
+          await rpcForMachine(target.machineId, '/api/snoozeSession', {
+            ...lifecycleParams(target),
+            snoozedUntil: message.snoozedUntil,
+          });
+          await lifecycleRpc(target, '/api/sleepSession');
+        }
+        return;
+      }
+      case 'unsnoozeSession': {
+        const target = parseSidebarSessionId(message.sessionId);
+        if (target) {
+          await rpcForMachine(target.machineId, '/api/unsnoozeSession', lifecycleParams(target));
+        }
+        return;
+      }
       case 'syncSessionOrder':
         await syncSessionOrder(message.groupId, message.sessionIds);
         return;
