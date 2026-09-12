@@ -69,7 +69,8 @@ function handleAppModalHostMessage(message: unknown): void {
       toasterId: 'app-modal',
       id: typeof message.toastId === 'string' ? message.toastId : undefined,
       description: typeof message.description === 'string' ? message.description : undefined,
-      duration: message.persistent === true ? Infinity : typeof message.durationMs === 'number' ? message.durationMs : 6000,
+      duration:
+        message.persistent === true ? Infinity : typeof message.durationMs === 'number' ? message.durationMs : 6000,
     });
     return;
   }
@@ -135,6 +136,10 @@ function handleAppModalHostMessage(message: unknown): void {
       ...(settingsMessage.initialAgentsSection ? { initialAgentsSection: settingsMessage.initialAgentsSection } : {}),
       ...(settingsMessage.initialTab ? { initialTab: settingsMessage.initialTab } : {}),
       ...(settingsMessage.initialRemoteSection ? { initialRemoteSection: settingsMessage.initialRemoteSection } : {}),
+      ...(settingsMessage.initialSection ? { initialSection: settingsMessage.initialSection } : {}),
+      ...(settingsMessage.initialSidebarTagsAction
+        ? { initialSidebarTagsAction: settingsMessage.initialSidebarTagsAction }
+        : {}),
     };
     window.dispatchEvent(new CustomEvent('ghostex-web:openSettingsModal', { detail }));
     return;

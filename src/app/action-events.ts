@@ -4,7 +4,11 @@ import type {
   SettingsAgentsSection,
   SettingsRemoteSection,
 } from '@/packages/core-ui/app-modal-host-bridge';
-import type { SettingsModalTab } from '@/packages/core-ui/settings-modal';
+import type {
+  MainSettingsInitialSectionId,
+  SettingsModalTab,
+  SettingsSidebarTagsAction,
+} from '@/packages/core-ui/settings-modal';
 
 export type OpenRecentProjectsModalDetail = Pick<
   Extract<OpenAppModalMessage, { modal: 'recentProjects' }>,
@@ -81,6 +85,9 @@ export interface RunTitlebarActionDetail {
 export interface OpenSettingsModalDetail {
   initialAgentsSection?: SettingsAgentsSection;
   initialRemoteSection?: SettingsRemoteSection;
+  /** Scrolls the General tab to one section, used by the sidebar's New tag deep link. */
+  initialSection?: MainSettingsInitialSectionId;
+  initialSidebarTagsAction?: SettingsSidebarTagsAction;
   initialTab?: SettingsModalTab;
 }
 

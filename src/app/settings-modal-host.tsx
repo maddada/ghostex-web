@@ -53,6 +53,8 @@ export function SettingsModalHost({ runtime }: { runtime: WebSidebarRuntime }) {
         appIconPickerUnavailable
         initialAgentsSection={openDetail?.initialAgentsSection}
         initialRemoteSection={openDetail?.initialRemoteSection}
+        initialSection={openDetail?.initialSection}
+        initialSidebarTagsAction={openDetail?.initialSidebarTagsAction}
         initialTab={openDetail?.initialTab}
         isOpen
         onChange={save}
