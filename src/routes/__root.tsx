@@ -22,6 +22,7 @@ import { createWebSidebarRuntime, type WebSidebarRuntime } from '../sidebar-runt
 
 const WEB_TITLEBAR_HIDDEN_SECTIONS = true;
 const SIDEBAR_WIDTH_STORAGE_KEY = 'ghostexWeb.sidebarWidth.v1';
+const SIDEBAR_COLLAPSED_STORAGE_KEY = 'ghostexWeb.sidebarCollapsed.v1';
 const DEFAULT_SIDEBAR_WIDTH = 296;
 const MIN_SIDEBAR_WIDTH = 220;
 const MAX_SIDEBAR_WIDTH = 520;
@@ -41,6 +42,10 @@ function clampSidebarWidth(width: number): number {
 function readSidebarWidth(): number {
   const storedWidth = Number(window.localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY));
   return Number.isFinite(storedWidth) && storedWidth > 0 ? clampSidebarWidth(storedWidth) : DEFAULT_SIDEBAR_WIDTH;
+}
+
+function readSidebarCollapsed(): boolean {
+  return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === 'true';
 }
 
 function ShellIcon({ name }: { name: IconName }) {
@@ -127,7 +132,7 @@ function Titlebar({
 
 function GhostexWebShell() {
   const runtime = useMemo(createWebSidebarRuntime, []);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarCollapsed);
   const [sidebarWidth, setSidebarWidth] = useState(readSidebarWidth);
 
   useEffect(() => {
@@ -140,6 +145,10 @@ function GhostexWebShell() {
   useEffect(() => {
     window.localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(sidebarWidth));
   }, [sidebarWidth]);
+
+  useEffect(() => {
+    window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(sidebarCollapsed));
+  }, [sidebarCollapsed]);
 
   const resizeSidebar = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.buttons !== 1) {
