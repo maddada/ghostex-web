@@ -32,7 +32,7 @@ import type { WorkspaceSession } from '../workspace/workspace-model';
 import { createSessionChatTransport } from '../chat/session-chat-transport';
 import type { ExportTranscriptSessionRef } from './action-events';
 import { publishExportTranscriptStatus } from './export-transcript-modal-host';
-import { readWebSettings, WEB_SETTINGS_CHANGED_EVENT } from './web-settings';
+import { readWebSettings, writeWebSettings, WEB_SETTINGS_CHANGED_EVENT } from './web-settings';
 
 const CHAT_ACTION_REASON = 'ghostex-web-chat';
 
@@ -292,6 +292,8 @@ export function SessionChatHost({
       theme={chatSettings.sessionChatTheme}
       transport={transport}
       verboseMode={chatSettings.sessionChatVerboseMode}
+      simpleMode={chatSettings.sessionChatSimpleMode}
+      onSimpleModeChange={(enabled) => writeWebSettings({ ...readWebSettings(), sessionChatSimpleMode: enabled })}
       fileEditPreviews={chatSettings.sessionChatFileEditPreviews}
       working={session.activity === 'working'}
     />
