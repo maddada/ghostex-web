@@ -290,6 +290,7 @@ export function SessionChatHost({
       sessionKey={sessionKey}
       sessionTitle={session.title}
       theme={chatSettings.sessionChatTheme}
+      appTheme={chatSettings.sidebarTheme}
       transport={transport}
       verboseMode={chatSettings.sessionChatVerboseMode}
       simpleMode={chatSettings.sessionChatSimpleMode}
