@@ -1,3 +1,4 @@
+import { useDelayedSendAgents } from '@/packages/core-ui/use-delayed-send-agents';
 import { useCallback, useEffect, useState } from 'react';
 
 import { DelayedSendModal } from '@/packages/core-ui/delayed-send-modal';
@@ -17,6 +18,7 @@ type DelayedActionRendererCommand = 'toggleCloseAfterDone';
 
 export function DelayedActionsModalHost() {
   const [detail, setDetail] = useState<OpenDelayedActionsModalDetail>();
+  const awakeSessions = useDelayedSendAgents(detail?.sessionId);
 
   useEffect(() => {
     const open = (event: WindowEventMap['ghostex-web:openDelayedActionsModal']) => {
@@ -80,6 +82,8 @@ export function DelayedActionsModalHost() {
 
   return (
     <DelayedSendModal
+      awakeSessions={awakeSessions}
+      sendWhenSpecificAgentFinishes={detail?.sendWhenSpecificAgentFinishes}
       agentIcon={detail?.agentIcon}
       closeAfterDoneActive={detail?.closeAfterDoneActive}
       delayedSendDeadlineAt={detail?.delayedSendDeadlineAt}
@@ -90,13 +94,14 @@ export function DelayedActionsModalHost() {
         request('cancelDelayedSend', '/api/cancelDelayedSend');
         close();
       }}
-      onConfirm={(delayMs, sendWhenAgentStops, sendWhenAllProjectSessionsStop) => {
+      onConfirm={(delayMs, sendWhenAgentStops, sendWhenAllProjectSessionsStop, sendWhenSpecificAgentFinishes) => {
         /*
         Exactly one trigger reaches the daemon: the modal reports `delayMs` only
-        for "After a delay", and the two status triggers are mutually exclusive.
+        for "After a delay", and the status triggers are mutually exclusive.
         */
         request('scheduleDelayedSend', '/api/scheduleDelayedSend', {
           ...(delayMs === undefined ? {} : { delayMs }),
+          ...(sendWhenSpecificAgentFinishes ? { sendWhenSpecificAgentFinishes } : {}),
           ...(sendWhenAllProjectSessionsStop ? { sendWhenAllProjectSessionsStop: true } : {}),
           ...(sendWhenAgentStops ? { sendWhenAgentStops: true } : {}),
         });

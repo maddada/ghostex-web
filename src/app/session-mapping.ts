@@ -31,6 +31,9 @@ export function presentationSessionToWorkspaceSession(
     ...(session.delayedSendRemainingLabel ? { delayedSendRemainingLabel: session.delayedSendRemainingLabel } : {}),
     ...(session.sendWhenAllProjectSessionsStopActive === true ? { sendWhenAllProjectSessionsStopActive: true } : {}),
     ...(session.sendWhenAgentStopsActive === true ? { sendWhenAgentStopsActive: true } : {}),
+    ...(session.sendWhenSpecificAgentFinishes
+      ? { sendWhenSpecificAgentFinishes: session.sendWhenSpecificAgentFinishes }
+      : {}),
     ...(typeof session.queuedPromptCount === 'number' && session.queuedPromptCount > 0
       ? { queuedPromptCount: session.queuedPromptCount }
       : {}),
