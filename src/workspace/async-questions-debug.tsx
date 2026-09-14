@@ -1,5 +1,9 @@
 import { useMemo, useState } from 'react';
 import { SessionChatView } from '@/packages/core-ui/chat/session-chat-view';
+import {
+  pendingSessionChatAsyncQuestions,
+  sessionChatAsyncAnswerPrefix,
+} from '@/packages/core-ui/chat/session-chat-async-questions-state';
 import type { SessionChatTransport } from '@/packages/core-ui/chat/session-chat-transport';
 import type {
   GxserverReadSessionChatResult,
@@ -14,6 +18,7 @@ function createSimulation(generation: number, onSend: (text: string) => void, on
   const listeners = new Set<(event: GxserverSessionChatEvent) => void>();
   let seq = 1;
   let failNext = false;
+  const dismissed = new Set<string>();
   const messages: SessionChatMessage[] = [
     {
       id: 'simulation-user',
@@ -98,7 +103,26 @@ function createSimulation(generation: number, onSend: (text: string) => void, on
       onSend(text);
       append('user', text);
     },
-    answerPrompt: async () => {},
+    answerPrompt: async (params) => {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const question = pendingSessionChatAsyncQuestions(messages).find(
+        (candidate) => candidate.key === params.questionId && !dismissed.has(candidate.key)
+      );
+      if (!question) throw new Error('This question is no longer pending in the terminal.');
+      if (failNext) {
+        failNext = false;
+        onFailure();
+        throw new Error('The terminal is showing a different question. Your answer has not been sent.');
+      }
+      if (params.kind === 'asyncQuestion') {
+        if (!params.text?.trim()) throw new Error('Enter an answer before sending.');
+        const text = sessionChatAsyncAnswerPrefix(question.title) + params.text;
+        onSend(text);
+        append('user', text);
+      } else if (params.kind === 'dismissAsyncQuestion') {
+        dismissed.add(question.key);
+      }
+    },
     interrupt: async () => {},
   };
   return {
