@@ -544,6 +544,17 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
       case 'createSessionInGroup':
         await createSession(message.groupId);
         return;
+      case 'postponeDelayedSend': {
+        const target = parseSidebarSessionId(message.sessionId);
+        if (target) {
+          await rpcForMachine(target.machineId, '/api/postponeDelayedSend', {
+            projectId: target.projectId,
+            sessionId: target.sessionId,
+            delayMs: message.delayMs,
+          });
+        }
+        return;
+      }
       case 'setSessionSleeping': {
         const target = parseSidebarSessionId(message.sessionId);
         if (target) {
