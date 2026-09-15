@@ -63,6 +63,14 @@ export function createSessionChatTransport(
         sessionId,
       });
     },
+    readHistory(params) {
+      return rpcForMachine<GxserverReadSessionChatResult>(machineId, '/api/readSessionChat', {
+        ...params,
+        projectId,
+        sessionId,
+        historyMode: params.detail ? 'detail' : 'turns',
+      });
+    },
     readSkills() {
       return rpcForMachine<GxserverReadSessionChatSkillsResult>(machineId, '/api/readSessionChatSkills', {
         projectId,
