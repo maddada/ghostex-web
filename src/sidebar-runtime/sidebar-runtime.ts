@@ -1,3 +1,4 @@
+import { storageScope } from '@/packages/client-storage';
 import type { WebviewApi } from '@/packages/core-ui/webview-api';
 import type { AgentAccountsState } from '@/packages/shared/agent-accounts';
 import {
@@ -66,6 +67,8 @@ import {
   navigationHistoryHotkeyDirection,
 } from '@/packages/shared/navigation-history/navigation-history-hotkeys';
 
+const clientStorage = storageScope(["webDebugSidebar"]);
+
 const DEBUG_SIDEBAR_STORAGE_KEY = 'ghostexWeb.debugSidebar';
 const DEFAULT_TERMINAL_TITLE = 'Terminal';
 
@@ -107,14 +110,15 @@ declare global {
   }
 }
 
-class WebSidebarMessageSource extends EventTarget {
+export class WebSidebarMessageSource extends EventTarget {
   postMessage(message: ExtensionToSidebarMessage): void {
     this.dispatchEvent(new MessageEvent<ExtensionToSidebarMessage>('message', { data: message }));
   }
 }
 
 export type WebSidebarRuntime = {
-  messageSource: SidebarMessageSource;
+  /** Exposed as the concrete source so app-owned hosts (the add-project modal) can post inbound sidebar messages. */
+  messageSource: WebSidebarMessageSource;
   /**
    * CDXC:Navigation 2026-08-19:
    * The titlebar's Back/Forward pair reads this controller. It is owned by the
@@ -544,14 +548,19 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
       case 'createSessionInGroup':
         await createSession(message.groupId);
         return;
+      case 'cancelDelayedSend':
       case 'postponeDelayedSend': {
         const target = parseSidebarSessionId(message.sessionId);
         if (target) {
-          await rpcForMachine(target.machineId, '/api/postponeDelayedSend', {
-            projectId: target.projectId,
-            sessionId: target.sessionId,
-            delayMs: message.delayMs,
-          });
+          await rpcForMachine(
+            target.machineId,
+            message.type === 'cancelDelayedSend' ? '/api/cancelDelayedSend' : '/api/postponeDelayedSend',
+            {
+              projectId: target.projectId,
+              sessionId: target.sessionId,
+              ...(message.type === 'postponeDelayedSend' ? { delayMs: message.delayMs } : {}),
+            }
+          );
         }
         return;
       }
@@ -1579,7 +1588,7 @@ function lifecycleRpc(
 }
 
 function debugLog(event: string, detail: unknown): void {
-  if (window.localStorage.getItem(DEBUG_SIDEBAR_STORAGE_KEY) === '1') {
+  if (clientStorage.getItem(DEBUG_SIDEBAR_STORAGE_KEY) === '1') {
     console.info(`[ghostex-web sidebar] ${event} ${JSON.stringify(detail)}`);
   }
 }
