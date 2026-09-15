@@ -217,8 +217,22 @@ export function AddProjectModalHost({ runtime }: { readonly runtime: WebSidebarR
       lookupRepository={lookupRepository}
       onClose={() => setModalState(undefined)}
       onProjectAdded={({ machineId, projectId }) => {
-        if (projectId)
-          runtime.vscode.postMessage({ type: 'focusGroup', groupId: createSidebarGroupId(machineId, projectId) });
+        if (!projectId) {
+          return;
+        }
+        /*
+         * CDXC:Spaces 2026-09-15 SEE-ALSO:
+         * The desktop host forwards the same message from
+         * apps/desktop/src/app/remote_conn/project_browse_and_add.rs before it
+         * activates the project; SidebarApp assigns the added project to the
+         * open Space and moves it to the top, so it is posted before the focus.
+         */
+        runtime.messageSource.postMessage({
+          projectId,
+          ...(machineId === 'local' ? {} : { remoteMachineId: machineId }),
+          type: 'assignAddedProjectToSelectedSpace',
+        });
+        runtime.vscode.postMessage({ type: 'focusGroup', groupId: createSidebarGroupId(machineId, projectId) });
       }}
       previewClone={previewClone}
       readCloneJob={readCloneJob}
