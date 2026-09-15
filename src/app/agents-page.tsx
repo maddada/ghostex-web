@@ -605,9 +605,11 @@ export function IntegratedAgentsPage() {
             if (!machine) {
               return <div className='workspace-terminal-unavailable'>Machine connection unavailable.</div>;
             }
+            const chatAgent = resolveSessionChatTranscriptAgent(session.agentId, session.agentIcon);
+            // ZCode publishes its conversation ID on the first prompt. Chat
+            // already addresses the Ghostex row by project/session ID to send it.
             const chatEligible =
-              Boolean(session.agentSessionId?.trim()) &&
-              resolveSessionChatTranscriptAgent(session.agentId, session.agentIcon) !== null;
+              chatAgent !== null && (chatAgent === 'zcode' || Boolean(session.agentSessionId?.trim()));
             const shortSessionId = shortAgentSessionId(session.agentSessionId);
             return (
               <div className='workspace-terminal-surface'>
