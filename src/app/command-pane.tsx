@@ -1,3 +1,4 @@
+import { storageScope } from '@/packages/client-storage';
 import { useEffect, useMemo, useRef, useState, type FocusEvent, type PointerEvent } from 'react';
 import type { GxserverProjectId, GxserverSessionId } from '@/packages/shared/gxserver-protocol';
 import type { GhostexWebMachine } from '../connections/types';
@@ -8,6 +9,8 @@ import {
   type WorkspaceSession,
 } from '../workspace/workspace-model';
 import type { ActiveProject } from './types';
+
+const clientStorage = storageScope(["webCommandHeight"]);
 
 export interface CommandPaneOpenRequest {
   requestId: number;
@@ -36,7 +39,7 @@ function clampHeight(height: number): number {
 }
 
 function readHeight(): number {
-  const stored = Number(window.localStorage.getItem(HEIGHT_STORAGE_KEY));
+  const stored = Number(clientStorage.getItem(HEIGHT_STORAGE_KEY));
   return clampHeight(Number.isFinite(stored) && stored > 0 ? stored : DEFAULT_HEIGHT);
 }
 
@@ -135,7 +138,7 @@ export function CommandPane({
   }, [activeSession, expanded, openRequest]);
 
   useEffect(() => {
-    window.localStorage.setItem(HEIGHT_STORAGE_KEY, String(Math.round(height)));
+    clientStorage.setItem(HEIGHT_STORAGE_KEY, String(Math.round(height)));
   }, [height]);
 
   useEffect(() => {

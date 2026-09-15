@@ -1,3 +1,4 @@
+import { bootClientStorage } from '@/packages/client-storage/bootstrap';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -23,8 +24,8 @@ if (!rootElement) {
   throw new Error('Ghostex web root element was not found.');
 }
 
-createRoot(rootElement).render(
+bootClientStorage(() => { createRoot(rootElement).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
-);
+); });

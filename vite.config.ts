@@ -1,3 +1,5 @@
+import { checkClientStorage } from '../../tooling/client-storage/check.mjs';
+checkClientStorage();
 import { transformAsync } from '@babel/core';
 import react from '@vitejs/plugin-react';
 import reactCompiler from 'babel-plugin-react-compiler';

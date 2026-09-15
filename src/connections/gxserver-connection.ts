@@ -1,6 +1,9 @@
+import { storageScope } from '@/packages/client-storage';
 import { reduceGxserverPresentationDelta } from '@/packages/shared/gxserver-presentation-cache';
 import { createGxserverClient, type PresentationSubscription, type SessionChatEventHandler } from './gxserver-client';
 import type { GhostexWebMachine, MachineConnectionState } from './types';
+
+const clientStorage = storageScope(["webDebugConnections"]);
 
 const RECONNECT_DELAYS_MS = [1_000, 2_000, 4_000, 8_000, 16_000] as const;
 const DEBUG_CONNECTIONS_STORAGE_KEY = 'ghostexWeb.debugConnections';
@@ -311,7 +314,7 @@ function errorMessage(error: unknown): string {
 }
 
 function logPresentationSnapshot(machine: GhostexWebMachine, revision: number, projectCount: number): void {
-  if (window.localStorage.getItem(DEBUG_CONNECTIONS_STORAGE_KEY) === '1') {
+  if (clientStorage.getItem(DEBUG_CONNECTIONS_STORAGE_KEY) === '1') {
     console.info(
       `[ghostex-web] presentation snapshot for ${machine.machineId}: revision=${revision}, projects=${projectCount}`
     );
@@ -319,7 +322,7 @@ function logPresentationSnapshot(machine: GhostexWebMachine, revision: number, p
 }
 
 function logPresentationCurrent(machine: GhostexWebMachine, revision: number): void {
-  if (window.localStorage.getItem(DEBUG_CONNECTIONS_STORAGE_KEY) === '1') {
+  if (clientStorage.getItem(DEBUG_CONNECTIONS_STORAGE_KEY) === '1') {
     console.info(`[ghostex-web] presentation already current for ${machine.machineId}: revision=${revision}`);
   }
 }

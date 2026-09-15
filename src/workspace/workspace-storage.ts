@@ -1,3 +1,4 @@
+import { storageScope } from '@/packages/client-storage';
 import {
   createWorkspaceModel,
   reconcileWorkspaceSessions,
@@ -6,6 +7,8 @@ import {
   type WorkspaceNode,
   type WorkspaceSession,
 } from './workspace-model';
+
+const clientStorage = storageScope(["webWorkspace"]);
 
 interface StoredWorkspaceLayouts {
   version: 1;
@@ -55,7 +58,7 @@ function isWorkspaceModel(value: unknown): value is WorkspaceModel {
 function readLayouts(): StoredWorkspaceLayouts {
   try {
     const parsed = JSON.parse(
-      window.localStorage.getItem(WORKSPACE_LAYOUT_STORAGE_KEY) ?? 'null'
+      clientStorage.getItem(WORKSPACE_LAYOUT_STORAGE_KEY) ?? 'null'
     ) as Partial<StoredWorkspaceLayouts> | null;
     if (parsed?.version === 1 && parsed.layouts && typeof parsed.layouts === 'object') {
       return { version: 1, layouts: parsed.layouts as Record<string, WorkspaceModel> };
@@ -79,5 +82,5 @@ export function loadPersistedWorkspaceLayout(machineId: string): WorkspaceModel 
 export function saveWorkspaceLayout(machineId: string, model: WorkspaceModel): void {
   const stored = readLayouts();
   stored.layouts[machineId] = model;
-  window.localStorage.setItem(WORKSPACE_LAYOUT_STORAGE_KEY, JSON.stringify(stored));
+  clientStorage.setItem(WORKSPACE_LAYOUT_STORAGE_KEY, JSON.stringify(stored));
 }

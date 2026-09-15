@@ -1,3 +1,4 @@
+import { storageScope } from '@/packages/client-storage';
 import {
   GXSERVER_PRODUCT,
   GXSERVER_PROTOCOL_VERSION,
@@ -9,6 +10,8 @@ import { removeMachineConnection, upsertMachineConnection } from '../connections
 import type { GhostexWebMachine } from '../connections/types';
 import { reconcileWebSessionChatDraftCache } from '../sidebar-runtime/draft-session-cache';
 import { applyRemoteMachineOrder } from './machine-order';
+
+const clientStorage = storageScope(["webMachines"]);
 
 export const MACHINES_STORAGE_KEY = 'ghostexWeb.machines.v1';
 
@@ -154,7 +157,7 @@ async function fetchPrimaryMachine(): Promise<GhostexWebMachine> {
 
 function readPersistedMachines(): GhostexWebMachine[] {
   try {
-    const serialized = window.localStorage.getItem(MACHINES_STORAGE_KEY);
+    const serialized = clientStorage.getItem(MACHINES_STORAGE_KEY);
     if (!serialized) {
       return [];
     }
@@ -172,7 +175,7 @@ function readPersistedMachines(): GhostexWebMachine[] {
 }
 
 function persistAddedMachines(machines: readonly GhostexWebMachine[]): void {
-  window.localStorage.setItem(
+  clientStorage.setItem(
     MACHINES_STORAGE_KEY,
     JSON.stringify(machines.filter((machine) => machine.machineId !== 'local'))
   );

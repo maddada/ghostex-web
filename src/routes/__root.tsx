@@ -1,3 +1,4 @@
+import { storageScope } from '@/packages/client-storage';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { useEffect, useMemo, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from 'react';
 import { AppTooltip, TooltipProvider } from '@/packages/core-ui/app-tooltip';
@@ -20,6 +21,8 @@ import { MachinesControl } from '../machines/MachinesControl';
 import { WebSidebar } from '../sidebar-runtime/WebSidebar';
 import { createWebSidebarRuntime, type WebSidebarRuntime } from '../sidebar-runtime/sidebar-runtime';
 
+const clientStorage = storageScope(["webSidebarWidth","webSidebarCollapsed"]);
+
 const WEB_TITLEBAR_HIDDEN_SECTIONS = true;
 const SIDEBAR_WIDTH_STORAGE_KEY = 'ghostexWeb.sidebarWidth.v1';
 const SIDEBAR_COLLAPSED_STORAGE_KEY = 'ghostexWeb.sidebarCollapsed.v1';
@@ -40,12 +43,12 @@ function clampSidebarWidth(width: number): number {
 }
 
 function readSidebarWidth(): number {
-  const storedWidth = Number(window.localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY));
+  const storedWidth = Number(clientStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY));
   return Number.isFinite(storedWidth) && storedWidth > 0 ? clampSidebarWidth(storedWidth) : DEFAULT_SIDEBAR_WIDTH;
 }
 
 function readSidebarCollapsed(): boolean {
-  return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === 'true';
+  return clientStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === 'true';
 }
 
 function ShellIcon({ name }: { name: IconName }) {
@@ -143,11 +146,11 @@ function GhostexWebShell() {
   }, [runtime]);
 
   useEffect(() => {
-    window.localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(sidebarWidth));
+    clientStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(sidebarWidth));
   }, [sidebarWidth]);
 
   useEffect(() => {
-    window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(sidebarCollapsed));
+    clientStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(sidebarCollapsed));
   }, [sidebarCollapsed]);
 
   const resizeSidebar = (event: ReactPointerEvent<HTMLDivElement>) => {
