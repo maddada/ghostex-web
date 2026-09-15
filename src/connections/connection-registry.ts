@@ -1,3 +1,4 @@
+import { setAgentCliConnectionSource, notifyAgentCliConnectionsChanged } from '@/packages/core-ui/agent-cli/transport';
 import { setAccountsConnectionSource } from '@/packages/core-ui/accounts/transport';
 import type { GxserverRpcEndpointPath } from '@/packages/shared/gxserver-protocol';
 import type { SessionChatEventHandler } from './gxserver-client';
@@ -5,7 +6,20 @@ import { GxserverConnection } from './gxserver-connection';
 import type { GhostexWebMachine, MachineConnectionState } from './types';
 
 const connections = new Map<string, GxserverConnection>();
-setAccountsConnectionSource(() => [...connections].map(([id, connection]) => ({ id, label: connection.machine.label, request: params => rpcForMachine(id, '/api/agentAccounts', params) })));
+setAccountsConnectionSource(() =>
+  [...connections].map(([id, connection]) => ({
+    id,
+    label: connection.machine.label,
+    request: (params) => rpcForMachine(id, '/api/agentAccounts', params),
+  }))
+);
+setAgentCliConnectionSource(() =>
+  [...connections].map(([id, connection]) => ({
+    id,
+    label: connection.machine.label,
+    request: (params) => rpcForMachine(id, '/api/agentCliMaintenance', params),
+  }))
+);
 const connectionUnsubscribers = new Map<string, () => void>();
 const listeners = new Set<() => void>();
 let snapshot: readonly MachineConnectionState[] = [];
@@ -125,6 +139,7 @@ export function getConnectionStates(): readonly MachineConnectionState[] {
 }
 
 function publish(): void {
+  notifyAgentCliConnectionsChanged();
   snapshot = [...connections.values()].map((connection) => connection.getState());
   for (const listener of listeners) {
     listener();
