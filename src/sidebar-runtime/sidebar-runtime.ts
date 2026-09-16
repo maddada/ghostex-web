@@ -964,7 +964,7 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
         return;
       }
       case 'openRecentProjectInFinder':
-        console.warn('[ghostex-web] Open in Finder is unavailable in the browser.');
+        console.warn('[ghostex-web] Open File/Folder Location is unavailable in the browser.');
         return;
       case 'cancelSidebarSessionFocusBorderHandoff':
       case 'setSidebarSessionFocusBorderHandoffHitTarget':
