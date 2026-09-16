@@ -1,3 +1,4 @@
+import { AppMenuPanel } from '@/packages/components/ui/app-menu-panel';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppTooltip } from '@/packages/core-ui/app-tooltip';
 import type { GxserverSidebarHudCommandButton, GxserverSidebarHudResponse } from '@/packages/shared/gxserver-protocol';
@@ -129,7 +130,7 @@ export function TitlebarActions() {
         </button>
       </AppTooltip>
       {open && (
-        <div className='web-actions-menu' role='menu'>
+        <AppMenuPanel className='web-actions-menu' role='menu'>
           <div className='web-actions-menu__heading'>Actions</div>
           {!activeProject && <div className='web-actions-menu__status'>Select a project to view its actions.</div>}
           {activeProject && loading && <div className='web-actions-menu__status'>Loading actions…</div>}
@@ -163,7 +164,7 @@ export function TitlebarActions() {
               <span aria-hidden='true'>⌃</span>
             </button>
           )}
-        </div>
+        </AppMenuPanel>
       )}
     </div>
   );

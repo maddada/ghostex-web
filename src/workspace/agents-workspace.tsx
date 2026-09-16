@@ -1,3 +1,4 @@
+import { AppMenuPanel } from '@/packages/components/ui/app-menu-panel';
 import { shortcutKeyFromKeyboardEvent } from '@/packages/shared/keyboard-shortcut-key';
 import {
   useEffect,
@@ -438,7 +439,7 @@ function Pane({
             <summary aria-label='Pane actions menu'>
               <WorkspaceIcon name='menu' />
             </summary>
-            <div className='workspace-menu' role='menu'>
+            <AppMenuPanel className='workspace-menu' role='menu'>
               <button onClick={() => onMenu('split-horizontal')} role='menuitem' type='button'>
                 Split Sideways
               </button>
@@ -454,7 +455,7 @@ function Pane({
               <button onClick={() => onMenu('focus')} role='menuitem' type='button'>
                 {model.focusModePane ? 'Exit Focus' : 'Focus'}
               </button>
-            </div>
+            </AppMenuPanel>
           </details>
         </div>
       </div>
@@ -753,7 +754,7 @@ export function AgentsWorkspace({
         )}
       />
       {tabMenu && (
-        <div
+        <AppMenuPanel
           className='workspace-context-menu workspace-menu'
           onPointerDown={(event) => event.stopPropagation()}
           role='menu'
@@ -781,7 +782,7 @@ export function AgentsWorkspace({
           >
             Close
           </button>
-        </div>
+        </AppMenuPanel>
       )}
     </div>
   );
