@@ -817,6 +817,15 @@ export function createWebSidebarRuntime(): WebSidebarRuntime {
       case 'closeWorkspaceProjectForGroup': {
         const target = parseSidebarGroupId(message.groupId);
         if (target) {
+          /*
+           * CDXC:Projects 2026-09-16 SEE-ALSO:
+           * Same order as the desktop runtime's closeProjectForGroup: the
+           * sidebar-chosen successor (an awake session in the same Space) is
+           * focused before the park so focus never leaves the Space.
+           */
+          if (message.successorSessionId) {
+            await focusSession(message.successorSessionId);
+          }
           const { recentProjects } = await rpcForMachine<{
             recentProjects: GxserverRecentProjectDomainState[];
           }>(target.machineId, '/api/closeProjectToRecent', { projectId: target.projectId });
