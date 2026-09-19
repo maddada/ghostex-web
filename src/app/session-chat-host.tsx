@@ -15,6 +15,7 @@
 // modal hosts the web app does not have.
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { adoptModelPicksSessionOnly } from '@/packages/shared/session-chat-presentation/model-picker';
 import type {
   GxserverForkSessionResult,
   GxserverSessionRenameRequestResult,
@@ -229,6 +230,10 @@ export function SessionChatHost({
     window.addEventListener(WEB_SETTINGS_CHANGED_EVENT, handleSettingsChanged);
     return () => window.removeEventListener(WEB_SETTINGS_CHANGED_EVENT, handleSettingsChanged);
   }, []);
+  useEffect(
+    () => adoptModelPicksSessionOnly(chatSettings.sessionChatModelPicksSessionOnly),
+    [chatSettings.sessionChatModelPicksSessionOnly]
+  );
   const sessionKey = `${session.machineId}:${session.projectId}:${session.sessionId}`;
   const transport = useMemo(
     () => createSessionChatTransport(session.machineId, session.projectId, session.sessionId),
