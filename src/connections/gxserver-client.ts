@@ -12,6 +12,7 @@ import {
   type GxserverSidebarSpacesState,
   type GxserverWorkspaceSessionGroupsState,
 } from '@/packages/shared/gxserver-protocol';
+import { adoptPublishedAgentModelCatalog } from '@/packages/shared/agent-model-catalog-state';
 import { gxserverRpcErrorFromResponseBody } from '@/packages/shared/gxserver-rpc-error';
 import { isSessionChatEventType, type GxserverSessionChatEvent } from '@/packages/shared/session-chat';
 import type { GhostexWebMachine } from './types';
@@ -193,6 +194,9 @@ export function createGxserverClient(machine: GhostexWebMachine) {
         handlers.onWorkspaceGroups(parsed.groups, parsed.revision);
       } else if (parsed?.type === 'globalSidebarCommandsChanged') {
         handlers.onGlobalSidebarCommands(parsed.revision);
+      } else if (parsed?.type === 'agentModelCatalogChanged') {
+        // Every machine's gxserver polls the same published file; the newer copy wins.
+        adoptPublishedAgentModelCatalog(parsed.catalog);
       } else if (parsed && isSessionChatEventType(parsed.type)) {
         const chatEvent = parsed as GxserverSessionChatEvent;
         const entry = chatHandlers.get(chatKey(chatEvent.projectId, chatEvent.sessionId));
