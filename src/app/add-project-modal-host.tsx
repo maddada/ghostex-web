@@ -93,7 +93,12 @@ export function AddProjectModalHost({ runtime }: { readonly runtime: WebSidebarR
         ...(input.inspectPath ? { inspectPath: input.inspectPath } : {}),
       }
     );
-    return { entries: result.entries, parentPath: result.parentPath, inspection: result.inspection };
+    return {
+      entries: result.entries,
+      parentPath: result.parentPath,
+      inspection: result.inspection,
+      isDriveList: result.isDriveList,
+    };
   }, []);
 
   const createDirectory = useCallback(
